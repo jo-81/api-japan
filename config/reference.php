@@ -1632,12 +1632,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         default_namespace?: scalar|Param|null, // Default namespace where stories will be created by maker. // Default: "Story"
  *     },
  * }
- * @psalm-type DamaDoctrineTestConfig = array{
- *     enable_static_connection?: mixed, // Default: true
- *     enable_static_meta_data_cache?: bool|Param, // Default: true
- *     enable_static_query_cache?: bool|Param, // Default: true
- *     connection_keys?: list<mixed>,
- * }
  * @psalm-type DoctrineDoctorConfig = array{
  *     enabled?: bool|Param, // Enable or disable Doctrine Doctor // Default: true
  *     analysis?: array{
@@ -2009,6 +2003,12 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         internal_logging?: bool|Param, // Enable internal logging for Doctrine Doctor analyzers. Can add ~133ms overhead. Enable only for debugging. // Default: false
  *     },
  * }
+ * @psalm-type DamaDoctrineTestConfig = array{
+ *     enable_static_connection?: mixed, // Default: true
+ *     enable_static_meta_data_cache?: bool|Param, // Default: true
+ *     enable_static_query_cache?: bool|Param, // Default: true
+ *     connection_keys?: list<mixed>,
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -2060,8 +2060,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         api_platform?: ApiPlatformConfig,
  *         web_profiler?: WebProfilerConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
- *         dama_doctrine_test?: DamaDoctrineTestConfig,
  *         doctrine_doctor?: DoctrineDoctorConfig,
+ *         dama_doctrine_test?: DamaDoctrineTestConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

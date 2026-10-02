@@ -83,6 +83,7 @@
         }
     },
     "require-dev": {
+        "ahmed-bhs/doctrine-doctor": "^2.11",
         "dama/doctrine-test-bundle": "^8.6",
         "doctrine/doctrine-fixtures-bundle": "^4.3",
         "justinrainbow/json-schema": "^6.13",

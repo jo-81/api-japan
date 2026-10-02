@@ -86,6 +86,7 @@
         "ahmed-bhs/doctrine-doctor": "^2.11",
         "dama/doctrine-test-bundle": "^8.6",
         "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "justinrainbow/json-schema": "^6.13",
         "phpunit/phpunit": "^13.4",
         "symfony/browser-kit": "8.1.*",

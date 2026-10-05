@@ -26,6 +26,26 @@ Création d'une API pour un dictionnaire de japonais qui permet de gérer et dé
 
 ## Commandes utiles
 
+### Démarrer Docker
+```bash
+make up
+```
+
+### Arrêter Docker
+```bash
+make down
+```
+
+### Création de la base de données
+```bash
+make db-create
+```
+
+### Création de la base de données de test
+```bash
+make db-test-create
+```
+
 ### Qualité du code
 ```bash
 # Lancer l'analyse statique PHPStan

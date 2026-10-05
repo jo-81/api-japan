@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/doctrine-orm": "^5.0",
@@ -72,6 +72,15 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "test": "php bin/phpunit",
+        "analyse": "phpstan analyse",
+        "cs": "php-cs-fixer fix --dry-run --diff",
+        "cs:fix": "php-cs-fixer fix",
+        "quality": [
+            "@test",
+            "@analyse",
+            "@cs"
         ]
     },
     "conflict": {

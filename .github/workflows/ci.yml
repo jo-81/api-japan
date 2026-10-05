@@ -1,0 +1,36 @@
+name: CI
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    quality:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Récupérer le code
+              uses: actions/checkout@v5
+
+            - name: Installer PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.4'
+                  extensions: pdo_pgsql, redis
+                  coverage: none
+
+            - name: Installer les dépendances
+              run: composer install --no-interaction --prefer-dist
+
+            - name: PHPUnit
+              run: composer test
+
+            - name: PHPStan
+              run: composer analyse
+
+            - name: PHP-CS-Fixer
+              run: composer cs

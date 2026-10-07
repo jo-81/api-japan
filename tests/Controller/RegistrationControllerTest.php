@@ -121,11 +121,11 @@ class RegistrationControllerTest extends WebTestCase
             'registration_form[passwordConfirmation]' => 'X7!kP9@vR2#qL5',
         ]);
 
-        self::assertCount(1, $this->userRepository->findAll());
-        self::assertFalse($this->userRepository->findAll()[0]->isEmailVerified());
+        $this->assertCount(1, $this->userRepository->findAll());
+        $this->assertFalse($this->userRepository->findAll()[0]->isEmailVerified());
 
-        self::assertEmailCount(1);
-        self::assertCount(1, $messages = $this->getMailerMessages());
+        $this->assertEmailCount(1);
+        $this->assertCount(1, $messages = $this->getMailerMessages());
 
         $this->assertResponseRedirects('/connexion');
         $this->client->followRedirect();
@@ -136,7 +136,7 @@ class RegistrationControllerTest extends WebTestCase
         /** @var TemplatedEmail $templatedEmail */
         $templatedEmail = $messages[0];
         $messageBody = $templatedEmail->getHtmlBody();
-        self::assertIsString($messageBody);
+        $this->assertIsString($messageBody);
 
         preg_match('#(http://localhost/verify/email.+)">#', $messageBody, $resetLink);
 
@@ -145,6 +145,22 @@ class RegistrationControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('div', 'Votre adresse email a bien été vérifiée.');
 
-        self::assertTrue(static::getContainer()->get(UserRepository::class)->findAll()[0]->isEmailVerified());
+        $this->assertTrue(static::getContainer()->get(UserRepository::class)->findAll()[0]->isEmailVerified());
+    }
+
+    #[WithStory(UniqueUserStory::class)]
+    public function testRedirectionWhenUserLogin(): void
+    {
+        $testUser = $this->userRepository->findOneByEmail('test-not-unique@example.com');
+        if (!is_null($testUser)) {
+            $this->client->loginUser($testUser);
+        }
+
+        $this->client->request('GET', '/inscription');
+
+        $this->assertResponseRedirects('/');
+        $this->client->followRedirect();
+
+        $this->assertSelectorTextContains('div', 'Vous êtes déjà connecté.');
     }
 }

@@ -33,6 +33,12 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
     ): Response {
+        if ($this->getUser()) {
+            $this->addFlash('info', 'Vous êtes déjà connecté.');
+
+            return $this->redirectToRoute('homepage');
+        }
+
         $registrationDto = new RegistrationDto();
         $form = $this->createForm(RegistrationFormType::class, $registrationDto);
         $form->handleRequest($request);

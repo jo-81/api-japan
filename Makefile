@@ -22,3 +22,9 @@ db-test-create: db-grant
 ## Crée la base de données dev
 db-create: 
 	php bin/console doctrine:database:create --if-not-exists
+
+serve:
+	symfony serve -d
+
+fixture-test:
+	php bin/console doctrine:fixtures:load --env=test

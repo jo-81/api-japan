@@ -37,7 +37,7 @@ final class UserFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'email' => self::faker()->unique()->text(180),
+            'email' => self::faker()->unique()->email(),
             'password' => self::faker()->word(),
         ];
     }

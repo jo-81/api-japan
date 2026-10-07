@@ -6,6 +6,7 @@ namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
 use App\Tests\Story\UniqueUserStory;
+use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use Zenstruck\Foundry\Attribute\WithStory;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationControllerTest extends WebTestCase
 {
+    use Factories;
     use ResetDatabase;
 
     private KernelBrowser $client;

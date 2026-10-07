@@ -6,12 +6,17 @@ namespace App\Tests\Entity;
 
 use App\Entity\User;
 use App\Factory\UserFactory;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserTest extends KernelTestCase
 {
+    use Factories;
+    use ResetDatabase;
+
     private ValidatorInterface $validator;
 
     #[\Override]

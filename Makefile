@@ -23,8 +23,14 @@ db-test-create: db-grant
 db-create: 
 	php bin/console doctrine:database:create --if-not-exists
 
+## Démarre le server de développement
 serve:
 	symfony serve -d
 
+## Ajoute les fixtures en base de données de test
 fixture-test:
 	php bin/console doctrine:fixtures:load --env=test
+
+## Lance les tests et cs:fix
+test:
+	composer cs:fix && composer quality

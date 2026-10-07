@@ -12,21 +12,22 @@ jobs:
     quality:
         runs-on: ubuntu-latest
 
+        env:
+            APP_ENV: test
+            DATABASE_URL: "mysql://root:root@127.0.0.1:3306/app_api_japan?serverVersion=10.11.2-MariaDB&charset=utf8mb4"
+
         services:
             mariadb:
                 image: mariadb:10.11
                 env:
                     MARIADB_ROOT_PASSWORD: root
-                    MARIADB_DATABASE: app_api_japan
-                    MARIADB_USER: app
-                    MARIADB_PASSWORD: password
                 ports:
                     - 3306:3306
                 options: >-
                     --health-cmd="healthcheck.sh --connect --innodb_initialized"
                     --health-interval=10s
                     --health-timeout=5s
-                    --health-retries=3
+                    --health-retries=5
 
         steps:
             - name: Récupérer le code
@@ -36,20 +37,19 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: '8.4'
-                  extensions: pdo_mysql, redis
+                  extensions: pdo_mysql
                   coverage: none
 
             - name: Installer les dépendances
               run: composer install --no-interaction --prefer-dist
 
+            - name: Créer la base de test
+              run: php bin/console doctrine:database:create --if-not-exists --no-interaction
+
             - name: Exécuter les migrations
-              env:
-                  DATABASE_URL: "mysql://root:root@127.0.0.1:3306/app_api_japan?serverVersion=mariadb-10.11.0&charset=utf8mb4"
               run: php bin/console doctrine:migrations:migrate --no-interaction
 
             - name: PHPUnit
-              env:
-                  DATABASE_URL: "mysql://root:root@127.0.0.1:3306/app_api_japan?serverVersion=mariadb-10.11.0&charset=utf8mb4"
               run: composer test
 
             - name: PHPStan

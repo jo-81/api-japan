@@ -52,6 +52,9 @@ jobs:
             - name: PHPUnit
               run: composer test
 
+            - name: Réchauffer le cache pour PHPStan
+              run: php bin/console cache:warmup --env=dev
+
             - name: PHPStan
               run: composer analyse
 

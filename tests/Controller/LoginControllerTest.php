@@ -30,7 +30,7 @@ class LoginControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function testLoginWithRoleAdmin(): void
+    public function testLoginWithEmailIsVerified(): void
     {
         $this->client->request('GET', '/connexion');
 
@@ -43,5 +43,20 @@ class LoginControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('div', 'Bienvenue !');
+    }
+
+    public function testLoginWithEmailIsNotVerified(): void
+    {
+        $this->client->request('GET', '/connexion');
+
+        $this->client->submitForm('Connexion', [
+            '_username' => 'email-not-verified@example.com',
+            '_password' => 'X7!kP9@vR2#qL5',
+        ]);
+
+        $this->assertResponseRedirects('/connexion');
+        $this->client->followRedirect();
+
+        $this->assertSelectorTextContains('div', "Votre compte n'a pas encore été vérifié.");
     }
 }

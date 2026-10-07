@@ -39,6 +39,7 @@ final class UserFactory extends PersistentObjectFactory
         return [
             'email' => self::faker()->unique()->email(),
             'password' => self::faker()->word(),
+            'EmailVerified' => self::faker()->boolean(),
         ];
     }
 
@@ -50,7 +51,6 @@ final class UserFactory extends PersistentObjectFactory
     {
         return $this->afterInstantiate(function (User $user): void {
             $user
-                ->setEmailVerified(self::faker()->boolean())
                 ->setPassword(
                     $this->passwordHasher->hashPassword($user, $user->getPassword()), // @phpstan-ignore-line
                 );

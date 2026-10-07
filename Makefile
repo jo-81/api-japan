@@ -31,6 +31,9 @@ serve:
 fixture-test:
 	php bin/console doctrine:fixtures:load --env=test
 
+fixture:
+	php bin/console doctrine:fixtures:load
+
 ## Lance les tests et cs:fix
 test:
 	composer cs:fix && composer quality

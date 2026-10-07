@@ -17,5 +17,11 @@ final class UserLoginStory extends Story
             'roles' => ['ROLE_ADMIN'],
             'emailVerified' => true,
         ]);
+
+        UserFactory::createOne([
+            'email' => 'email-not-verified@example.com',
+            'password' => 'X7!kP9@vR2#qL5',
+            'emailVerified' => false,
+        ]);
     }
 }

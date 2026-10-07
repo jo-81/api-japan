@@ -5,24 +5,32 @@ declare(strict_types=1);
 namespace App\Tests\Entity;
 
 use App\Entity\User;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\Validation;
+use App\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UserTest extends TestCase
+class UserTest extends KernelTestCase
 {
+    private ValidatorInterface $validator;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        $this->validator = $container->get('validator');
+
+        parent::setUp();
+    }
+
     #[DataProvider('emailValidationProvider')]
     public function testEmailValidation(string $email, int $countError): void
     {
-        $validator = Validation::createValidatorBuilder()
-            ->enableAttributeMapping()
-            ->getValidator()
-        ;
-
         $user = new User();
         $user->setEmail($email);
 
-        $violations = $validator->validate($user);
+        $violations = $this->validator->validate($user);
 
         $this->assertCount($countError, $violations);
     }
@@ -59,12 +67,10 @@ class UserTest extends TestCase
     public function testPreUpdate(): void
     {
         $user = new User();
-
         $user->onPrePersist();
 
         $createdAt = $user->getCreatedAt();
         $updatedAt = $user->getUpdatedAt();
-
         usleep(1000);
 
         $user->onPreUpdate();
@@ -77,6 +83,25 @@ class UserTest extends TestCase
         $this->assertNotSame(
             $updatedAt,
             $user->getUpdatedAt(),
+        );
+    }
+
+    public function testUniqueEntity(): void
+    {
+        UserFactory::createOne([
+            'email' => 'test-not-unique@example.com',
+        ]);
+
+        $user = new User();
+        $user->setEmail('test-not-unique@example.com');
+
+        $violations = $this->validator->validate($user);
+
+        $this->assertCount(1, $violations);
+        $this->assertSame('email', $violations[0]?->getPropertyPath());
+        $this->assertSame(
+            'Cette adresse email est déjà utilisée.',
+            $violations[0]->getMessage(),
         );
     }
 }

@@ -8,18 +8,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationDto
 {
-    #[Assert\NotBlank]
-    #[Assert\Email]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pa être vide.')]
+    #[Assert\Email(message: 'Cette valeur doit être une adresse email valide.')]
     #[Assert\Length(max: 180)]
     #[Assert\NoSuspiciousCharacters]
     public string $email;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pa être vide.')]
     #[Assert\Length(min: 8)]
     #[Assert\PasswordStrength(minScore: Assert\PasswordStrength::STRENGTH_MEDIUM)]
     public string $plainPassword;
 
     #[Assert\NotBlank]
-    #[Assert\EqualTo(propertyPath: 'plainPassword')]
+    #[Assert\EqualTo(propertyPath: 'plainPassword', message: 'Les mots de passe ne sont pas identiques.')]
     public string $passwordConfirmation;
 }

@@ -41,6 +41,7 @@ class UserCrudControllerTest extends CrudTestCase
     {
         return [
             ['index', 'GET', 200],
+            ['detail', 'GET', 200],
             ['new', 'GET', 403],
             ['new', 'POST', 403],
             ['edit', 'GET', 403],
@@ -56,6 +57,7 @@ class UserCrudControllerTest extends CrudTestCase
     {
         return [
             ['index', 'GET', 403],
+            ['detail', 'GET', 403],
             ['new', 'GET', 403],
             ['new', 'POST', 403],
             ['edit', 'GET', 403],
@@ -71,6 +73,7 @@ class UserCrudControllerTest extends CrudTestCase
     {
         return [
             ['index', 'GET', 302],
+            ['detail', 'GET', 302],
             ['new', 'GET', 302],
             ['new', 'POST', 302],
             ['edit', 'GET', 302],

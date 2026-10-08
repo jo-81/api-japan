@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller\Admin;
 
-use App\Entity\User;
 use App\Tests\Utils\CrudTestCase;
 use App\Tests\Story\UserLoginStory;
 use Zenstruck\Foundry\Test\Factories;
@@ -12,7 +11,6 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 use Zenstruck\Foundry\Attribute\WithStory;
 use App\Controller\Admin\UserCrudController;
 use App\Controller\Admin\DashboardController;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 #[WithStory(UserLoginStory::class)]
 class UserCrudControllerTest extends CrudTestCase
@@ -36,39 +34,48 @@ class UserCrudControllerTest extends CrudTestCase
         return DashboardController::class;
     }
 
-    #[DataProvider('getDataProviderWhenUserLogged')]
-    public function testAccessPageWhenUserLogged(
-        string $action,
-        string $httpMethod,
-        int $statusCode,
-        ?string $email = null,
-    ): void {
-        $entityId = 0;
-
-        if (!is_null($email)) {
-            /** @var ?User $user */
-            $user = $this->getUserLogged(['email' => $email]);
-
-            if (!is_null($user)) {
-                $entityId = $user->getId();
-                $this->client->loginUser($user);
-            }
-        }
-
-        $this->client->request($httpMethod, $this->getAdminLink($action, $entityId)); // @phpstan-ignore-line
-
-        static::assertResponseStatusCodeSame($statusCode);
+    /**
+     * @return array<int, array{0: string, 1: string, 2: int}>
+     */
+    public static function getDataProviderWhenUserLoggedWithRoleAdmin(): array
+    {
+        return [
+            ['index', 'GET', 200],
+            ['new', 'GET', 403],
+            ['new', 'POST', 403],
+            ['edit', 'GET', 403],
+            ['edit', 'POST', 403],
+            ['delete', 'POST', 403],
+        ];
     }
 
     /**
-     * @return array<string, array{0: string, 1: string, 2: int, 3?: string|null}>
+     * @return array<int, array{0: string, 1: string, 2: int}>
      */
-    public static function getDataProviderWhenUserLogged(): array
+    public static function getDataProviderWhenUserLoggedWithRoleNotAdmin(): array
     {
         return [
-            'Utilisateur avec un rôle ROLE_ADMIN' => ['index', 'GET', 200, 'admin@example.com'],
-            'Utilisateur avec un rôle ROLE_USER' => ['index', 'GET', 403, 'user@example.com'],
-            'Utilisateur non connecté' => ['index', 'GET', 302],
+            ['index', 'GET', 403],
+            ['new', 'GET', 403],
+            ['new', 'POST', 403],
+            ['edit', 'GET', 403],
+            ['edit', 'POST', 403],
+            ['delete', 'POST', 403],
+        ];
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: int}>
+     */
+    public static function getDataProviderWhenUserNotLogged(): array
+    {
+        return [
+            ['index', 'GET', 302],
+            ['new', 'GET', 302],
+            ['new', 'POST', 302],
+            ['edit', 'GET', 302],
+            ['edit', 'POST', 302],
+            ['delete', 'POST', 302],
         ];
     }
 }

@@ -6,6 +6,7 @@ namespace App\Tests\Utils;
 
 use App\Entity\User;
 use Symfony\Component\Uid\UuidV7;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Security\Core\User\UserInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Test\AbstractCrudTestCase;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
@@ -47,26 +48,40 @@ abstract class CrudTestCase extends AbstractCrudTestCase
         };
     }
 
-    // #[DataProvider('getDataProviderWhenUserLogged')]
-    // public function testAccessPageWhenUserLogged(string $action, string $httpMethod, int $statusCode): void
-    // {
-    //     $user = $this->getUserLogged(['email' => 'email@example.com']);
-    //     $entityId = 1;
+    #[DataProvider('getDataProviderWhenUserLoggedWithRoleAdmin')]
+    public function testAccessPageWhenUserLogged(string $action, string $httpMethod, int $statusCode): void
+    {
+        $this->accessPage($httpMethod, $action, $statusCode, 'admin@example.com');
+    }
 
-    //     if (!is_null($user)) {
-    //         $this->client->loginUser($user);
-    //     }
+    #[DataProvider('getDataProviderWhenUserLoggedWithRoleNotAdmin')]
+    public function testAccessPageWhenUserLoggedWithRoleNotAdmin(string $action, string $httpMethod, int $statusCode): void
+    {
+        $this->accessPage($httpMethod, $action, $statusCode, 'user@example.com');
+    }
 
-    //     $this->client->request($httpMethod, $this->getAdminLink($action, $entityId));
+    #[DataProvider('getDataProviderWhenUserNotLogged')]
+    public function testAccessPageWhenUserNotLogged(string $action, string $httpMethod, int $statusCode): void
+    {
+        $this->accessPage($httpMethod, $action, $statusCode);
+    }
 
-    //     static::assertResponseStatusCodeSame($statusCode);
-    // }
+    private function accessPage(string $httpMethod, string $action, int $statusCode, ?string $email = null): void
+    {
+        $entityId = 0;
 
-    // #[DataProvider('getDataProviderWhenUserNotLogged')]
-    // public function testAccessPageWhenUserNotLogged(string $action, string $httpMethod, int $statusCode): void
-    // {
-    //     $this->client->request($httpMethod, $this->getAdminLink($action));
+        if (!is_null($email)) {
+            /** @var ?User $user */
+            $user = $this->getUserLogged(['email' => $email]);
 
-    //     static::assertResponseStatusCodeSame($statusCode);
-    // }
+            if (!is_null($user)) {
+                $entityId = $user->getId();
+                $this->client->loginUser($user);
+            }
+        }
+
+        $this->client->request($httpMethod, $this->getAdminLink($action, $entityId)); // @phpstan-ignore-line
+
+        $this->assertResponseStatusCodeSame($statusCode);
+    }
 }

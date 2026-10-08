@@ -6,6 +6,8 @@ namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
 use App\Tests\Story\UniqueUserStory;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 use Zenstruck\Foundry\Attribute\WithStory;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -14,6 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationControllerTest extends WebTestCase
 {
+    use Factories;
+    use ResetDatabase;
+
     private KernelBrowser $client;
     private UserRepository $userRepository;
 
@@ -145,7 +150,9 @@ class RegistrationControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('div', 'Votre adresse email a bien été vérifiée.');
 
-        $this->assertTrue(static::getContainer()->get(UserRepository::class)->findAll()[0]->isEmailVerified());
+        $updatedUser = static::getContainer()->get(UserRepository::class)->findOneByEmail('test-registration@example.fr');
+        $this->assertNotNull($updatedUser);
+        $this->assertTrue($updatedUser->isEmailVerified());
     }
 
     #[WithStory(UniqueUserStory::class)]

@@ -11,18 +11,25 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/connexion', name: 'app_login')]
+    #[Route(path: '/connexion', name: 'app_login', methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        if ($this->getUser()) {
+            $this->addFlash('info', 'Vous êtes déjà connecté.');
 
-        // last username entered by the user
+            return $this->redirectToRoute('homepage');
+        }
+
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', [
+        return $this->render('@EasyAdmin/page/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            'sign_in_label' => 'Connexion',
+            'username_label' => 'Adresse email',
+            'csrf_token_intention' => '_authenticate',
+            'page_title' => 'Connexion',
         ]);
     }
 

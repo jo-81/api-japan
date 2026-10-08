@@ -28,7 +28,6 @@ class ResetPasswordControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->client->disableReboot();
     }
 
     public function testResetPassword(): void
@@ -94,5 +93,20 @@ class ResetPasswordControllerTest extends WebTestCase
         self::assertTrue($passwordHasher->isPasswordValid($user, '136546X7!kedfzgeP9@vR2#qL511'));
 
         self::assertCount(0, $resetPasswordRequestRepository->findBy(['user' => $user]));
+    }
+
+    public function testResetPasswordWhenUserNotLogged(): void
+    {
+        $container = static::getContainer();
+        $userRepository = $container->get(UserRepository::class);
+
+        $user = $userRepository->findOneByEmail('admin@example.com');
+        if (!is_null($user)) {
+            $this->client->loginUser($user);
+        }
+
+        $this->client->request('GET', '/reinitialisation-mot-de-passe');
+        $this->assertResponseRedirects('/');
+        $this->client->followRedirect();
     }
 }

@@ -25,7 +25,7 @@ db-create:
 
 ## Démarre le server de développement
 serve:
-	symfony serve -d
+	symfony serve -d --open
 
 ## Ajoute les fixtures en base de données de test
 fixture-test:

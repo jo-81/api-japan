@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use App\Repository\UserRepository;
 use App\Tests\Story\UserLoginStory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -18,10 +19,15 @@ class LoginControllerTest extends WebTestCase
     use ResetDatabase;
 
     private KernelBrowser $client;
+    private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
+
+        $container = static::getContainer();
+
+        $this->userRepository = $container->get(UserRepository::class);
     }
 
     public function testLogin(): void
@@ -58,5 +64,19 @@ class LoginControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('div', "Votre compte n'a pas encore été vérifié.");
+    }
+
+    public function testRedirectionAccessPageLoginWhenUserLogged(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin@example.com']);
+        if (!is_null($user)) {
+            $this->client->loginUser($user);
+        }
+
+        $this->client->request('GET', '/connexion');
+        $this->assertResponseRedirects('/');
+        $this->client->followRedirect();
+
+        $this->assertSelectorTextContains('div', 'Vous êtes déjà connecté.');
     }
 }

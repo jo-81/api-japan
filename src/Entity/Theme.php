@@ -10,9 +10,11 @@ use App\Model\SluggableInterface;
 use App\Traits\TimestampableTrait;
 use App\Repository\ThemeRepository;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
+#[UniqueEntity(fields: ['name'], message: 'Cette valeur est déjà utilisée.')]
 class Theme implements SluggableInterface
 {
     use TimestampableTrait;

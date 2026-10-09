@@ -28,11 +28,14 @@ class ThemeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id');
+        yield IdField::new('id')->hideOnForm();
 
         yield TextField::new('name', 'Nom');
 
-        yield SlugField::new('slug', 'Permalien')->setTargetFieldName('name');
+        yield SlugField::new('slug', 'Permalien')
+            ->setTargetFieldName('name')
+            ->hideOnForm()
+        ;
 
         yield DateField::new('createdAt', 'Date de création')
             ->onlyOnIndex()
@@ -61,6 +64,7 @@ class ThemeCrudController extends AbstractCrudController
             ->setSearchFields(['name'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
+            ->setPageTitle('new', 'Ajouter un %entity_label_singular%')
             ->setPageTitle('detail', fn (Theme $theme) => 'Consulter le %entity_label_singular% : <b>'.$theme->getName().'</b>')
         ;
     }
@@ -73,6 +77,7 @@ class ThemeCrudController extends AbstractCrudController
                 return $action->setLabel('Ajouter');
             })
             ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
+            ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
         ;
     }
 

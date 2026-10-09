@@ -47,6 +47,8 @@ class ThemeCrudControllerTest extends CrudTestCase
         return [
             ['index', 'GET', 200],
             ['detail', 'GET', 200],
+            ['new', 'GET', 200],
+            ['edit', 'GET', 200],
         ];
     }
 
@@ -62,10 +64,10 @@ class ThemeCrudControllerTest extends CrudTestCase
             'Theme[name]' => 'Un thème à voir',
         ]);
 
-        $this->assertResponseRedirects($this->getAdminLink('index'));
-
         /** @var ?Theme */
         $theme = static::getContainer()->get(ThemeRepository::class)->findOneBy(['name' => 'Un thème à voir']);
+
+        $this->assertResponseRedirects($this->getAdminLink('detail', $theme?->getId())); // @phpstan-ignore-line
 
         $this->assertSame('un-theme-a-voir', $theme?->getSlug()?->getValue());
         $this->assertInstanceOf(Theme::class, $theme);
@@ -108,5 +110,26 @@ class ThemeCrudControllerTest extends CrudTestCase
             [str_repeat('a', 249).'example', 'Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.'],
             ['un theme spécifique', 'Cette valeur est déjà utilisée.'],
         ];
+    }
+
+    public function testEditTheme(): void
+    {
+        $user = $this->getUserLogged(['email' => 'admin@example.com']);
+        if (!is_null($user)) {
+            $this->client->loginUser($user);
+        }
+
+        $this->client->request('GET', $this->getAdminLink('edit', 1));
+        $this->client->submitForm('ea[newForm][btn]', [
+            'Theme[name]' => 'Un thème à voir',
+        ]);
+
+        $this->assertResponseRedirects($this->getAdminLink('detail', 1));
+
+        /** @var ?Theme */
+        $theme = static::getContainer()->get(ThemeRepository::class)->findOneBy(['name' => 'Un thème à voir']);
+
+        $this->assertSame('un-theme-a-voir', $theme?->getSlug()?->getValue());
+        $this->assertInstanceOf(Theme::class, $theme);
     }
 }

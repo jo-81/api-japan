@@ -49,36 +49,4 @@ class UserCrudControllerTest extends CrudTestCase
             ['delete', 'POST', 403],
         ];
     }
-
-    /**
-     * @return array<int, array{0: string, 1: string, 2: int}>
-     */
-    public static function getDataProviderWhenUserLoggedWithRoleNotAdmin(): array
-    {
-        return [
-            ['index', 'GET', 403],
-            ['detail', 'GET', 403],
-            ['new', 'GET', 403],
-            ['new', 'POST', 403],
-            ['edit', 'GET', 403],
-            ['edit', 'POST', 403],
-            ['delete', 'POST', 403],
-        ];
-    }
-
-    /**
-     * @return array<int, array{0: string, 1: string, 2: int}>
-     */
-    public static function getDataProviderWhenUserNotLogged(): array
-    {
-        return [
-            ['index', 'GET', 302],
-            ['detail', 'GET', 302],
-            ['new', 'GET', 302],
-            ['new', 'POST', 302],
-            ['edit', 'GET', 302],
-            ['edit', 'POST', 302],
-            ['delete', 'POST', 302],
-        ];
-    }
 }

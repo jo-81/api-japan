@@ -7,6 +7,7 @@ namespace App\Entity;
 use Symfony\Component\Uid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Traits\TimestampableTrait;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,13 +21,15 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[UniqueEntity(fields: ['email'], message: 'Cette adresse email est déjà utilisée.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     private ?Uuid $id = null;
 
-    #[Assert\NotBlank(message: 'Ce champ ne peut pa être vide.')]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide.')]
     #[Assert\Email(message: 'Cette valeur doit être une adresse email valide.')]
     #[Assert\Length(max: 180)]
     #[ORM\Column(length: 180)]
@@ -46,27 +49,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $emailVerified = false;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $updatedAt;
-
-    #[ORM\PrePersist]
-    public function onPrePersist(): void
-    {
-        $now = new \DateTimeImmutable();
-
-        $this->createdAt = $now;
-        $this->updatedAt = $now;
-    }
-
-    #[ORM\PreUpdate]
-    public function onPreUpdate(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?Uuid
     {
@@ -157,15 +139,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->emailVerified = $emailVerified;
 
         return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 }

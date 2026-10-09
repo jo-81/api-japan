@@ -55,42 +55,6 @@ class UserTest extends KernelTestCase
         ];
     }
 
-    public function testPrePersist(): void
-    {
-        $user = new User();
-
-        $user->onPrePersist();
-
-        $this->assertInstanceOf(\DateTimeImmutable::class, $user->getCreatedAt());
-        $this->assertInstanceOf(\DateTimeImmutable::class, $user->getUpdatedAt());
-        $this->assertSame(
-            $user->getCreatedAt(),
-            $user->getUpdatedAt(),
-        );
-    }
-
-    public function testPreUpdate(): void
-    {
-        $user = new User();
-        $user->onPrePersist();
-
-        $createdAt = $user->getCreatedAt();
-        $updatedAt = $user->getUpdatedAt();
-        usleep(1000);
-
-        $user->onPreUpdate();
-
-        $this->assertSame(
-            $createdAt,
-            $user->getCreatedAt(),
-        );
-
-        $this->assertNotSame(
-            $updatedAt,
-            $user->getUpdatedAt(),
-        );
-    }
-
     public function testUniqueEntity(): void
     {
         UserFactory::createOne([

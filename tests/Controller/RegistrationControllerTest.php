@@ -75,7 +75,7 @@ class RegistrationControllerTest extends WebTestCase
                 '',
                 'X7!kP9@vR2#qL5',
                 'X7!kP9@vR2#qL5',
-                'Ce champ ne peut pa être vide.',
+                'Ce champ ne peut pas être vide.',
             ],
 
             'Email déjà présent' => [
@@ -96,7 +96,7 @@ class RegistrationControllerTest extends WebTestCase
                 'test-registration@example.fr',
                 '',
                 'X7!kP9@vR2#',
-                'Ce champ ne peut pa être vide.',
+                'Ce champ ne peut pas être vide.',
             ],
 
             'plainPassword qui ne correspond pas à MEDIUM' => [

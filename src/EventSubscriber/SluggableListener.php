@@ -28,7 +28,14 @@ class SluggableListener
 
     public function preUpdate(PreUpdateEventArgs $args): void
     {
-        $this->processSlug($args->getObject());
+        $entity = $args->getObject();
+        if (!$entity instanceof SluggableInterface) {
+            return;
+        }
+
+        if ($args->hasChangedField($entity->getSluggableFieldName())) {
+            $this->processSlug($entity);
+        }
     }
 
     private function processSlug(object $entity): void

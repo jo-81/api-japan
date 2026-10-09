@@ -47,6 +47,11 @@ class Theme implements SluggableInterface
         return $this;
     }
 
+    public function getSluggableFieldName(): string
+    {
+        return 'name';
+    }
+
     public function getSluggableText(): string
     {
         return $this->name ?? '';

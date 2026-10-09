@@ -44,7 +44,7 @@ class ThemeCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInPlural('thèmes')
-            ->setEntityLabelInSingular('thême')
+            ->setEntityLabelInSingular('thème')
 
             ->setDefaultSort(['id' => 'DESC'])
 

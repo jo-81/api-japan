@@ -9,7 +9,12 @@ use App\ValueObject\Slug;
 interface SluggableInterface
 {
     /**
-     * Retourne la valeur à convertir en slug (ex: name, title).
+     * Retourne le nom de la propriété dont la valeur doit être convertie en slug (ex: 'name', 'title').
+     */
+    public function getSluggableFieldName(): string;
+
+    /**
+     * Retourne la valeur à convertir en slug.
      */
     public function getSluggableText(): string;
 

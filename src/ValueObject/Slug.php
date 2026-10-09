@@ -13,6 +13,10 @@ final class Slug implements \Stringable
 {
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
+    #[Assert\Regex(
+        pattern: '/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+        message: 'Le slug n\'est pas valide.',
+    )]
     #[ORM\Column(name: 'slug', length: 255, unique: true, nullable: true)]
     private ?string $value = null;
 

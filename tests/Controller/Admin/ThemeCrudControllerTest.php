@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Admin;
 
 use App\Tests\Utils\CrudTestCase;
+use App\Tests\Story\ThemeTestStory;
 use App\Tests\Story\UserLoginStory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -13,6 +14,7 @@ use App\Controller\Admin\DashboardController;
 use App\Controller\Admin\ThemeCrudController;
 
 #[WithStory(UserLoginStory::class)]
+#[WithStory(ThemeTestStory::class)]
 class ThemeCrudControllerTest extends CrudTestCase
 {
     use ResetDatabase;
@@ -41,26 +43,7 @@ class ThemeCrudControllerTest extends CrudTestCase
     {
         return [
             ['index', 'GET', 200],
-        ];
-    }
-
-    /**
-     * @return array<int, array{0: string, 1: string, 2: int}>
-     */
-    public static function getDataProviderWhenUserLoggedWithRoleNotAdmin(): array
-    {
-        return [
-            ['index', 'GET', 403],
-        ];
-    }
-
-    /**
-     * @return array<int, array{0: string, 1: string, 2: int}>
-     */
-    public static function getDataProviderWhenUserNotLogged(): array
-    {
-        return [
-            ['index', 'GET', 302],
+            ['detail', 'GET', 200],
         ];
     }
 }

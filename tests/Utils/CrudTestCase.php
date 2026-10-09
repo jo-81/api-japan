@@ -6,6 +6,7 @@ namespace App\Tests\Utils;
 
 use App\Entity\User;
 use Symfony\Component\Uid\UuidV7;
+use App\Controller\Admin\UserCrudController;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Security\Core\User\UserInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Test\AbstractCrudTestCase;
@@ -66,16 +67,48 @@ abstract class CrudTestCase extends AbstractCrudTestCase
         $this->accessPage($httpMethod, $action, $statusCode);
     }
 
+    /**
+     * @return array<int, array{0: string, 1: string, 2: int}>
+     */
+    public static function getDataProviderWhenUserLoggedWithRoleNotAdmin(): array
+    {
+        return [
+            ['index', 'GET', 403],
+            ['detail', 'GET', 403],
+            ['new', 'GET', 403],
+            ['new', 'POST', 403],
+            ['edit', 'GET', 403],
+            ['edit', 'POST', 403],
+            ['delete', 'POST', 403],
+        ];
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: int}>
+     */
+    public static function getDataProviderWhenUserNotLogged(): array
+    {
+        return [
+            ['index', 'GET', 302],
+            ['detail', 'GET', 302],
+            ['new', 'GET', 302],
+            ['new', 'POST', 302],
+            ['edit', 'GET', 302],
+            ['edit', 'POST', 302],
+            ['delete', 'POST', 302],
+        ];
+    }
+
     private function accessPage(string $httpMethod, string $action, int $statusCode, ?string $email = null): void
     {
-        $entityId = 0;
+        $entityId = 1;
 
         if (!is_null($email)) {
             /** @var ?User $user */
             $user = $this->getUserLogged(['email' => $email]);
 
             if (!is_null($user)) {
-                $entityId = $user->getId();
+                $entityId = UserCrudController::class == $this->getControllerFqcn() ? $user->getId() : $entityId;
                 $this->client->loginUser($user);
             }
         }

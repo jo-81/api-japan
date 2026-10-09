@@ -38,6 +38,16 @@ class ThemeCrudController extends AbstractCrudController
             ->onlyOnIndex()
             ->setFormat(DateTimeField::FORMAT_FULL)
         ;
+
+        yield DateTimeField::new('createdAt', 'Date de création')
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
+
+        yield DateTimeField::new('updatedAt', 'Dernière modification')
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -51,6 +61,7 @@ class ThemeCrudController extends AbstractCrudController
             ->setSearchFields(['name'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
+            ->setPageTitle('detail', fn (Theme $theme) => 'Consulter le %entity_label_singular% : <b>'.$theme->getName().'</b>')
         ;
     }
 
@@ -61,6 +72,7 @@ class ThemeCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action->setLabel('Ajouter');
             })
+            ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
         ;
     }
 

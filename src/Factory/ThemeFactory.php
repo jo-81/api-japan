@@ -36,7 +36,7 @@ final class ThemeFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'name' => self::faker()->unique()->text(255),
+            'name' => self::faker()->unique()->word(),
         ];
     }
 

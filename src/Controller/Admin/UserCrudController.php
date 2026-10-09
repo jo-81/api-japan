@@ -59,6 +59,8 @@ class UserCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('utilisateurs')
             ->setEntityLabelInSingular('utilisateur')
 
+            ->setDefaultSort(['createdAt' => 'DESC'])
+
             ->setSearchFields(['email'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')

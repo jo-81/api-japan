@@ -79,7 +79,7 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "test": "php bin/phpunit",
+        "test": "vendor/bin/phpunit",
         "analyse": "phpstan analyse",
         "cs": "php-cs-fixer fix --dry-run --diff",
         "cs:fix": "php-cs-fixer fix",

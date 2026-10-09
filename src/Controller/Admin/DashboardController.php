@@ -27,8 +27,12 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+
         yield MenuItem::section('Utilisateurs');
         yield MenuItem::linkTo(UserCrudController::class, 'Liste des utilisateurs', 'fas fa-users');
+
+        yield MenuItem::section('Mots de vocabulaire');
+        yield MenuItem::linkTo(ThemeCrudController::class, 'Liste des thèmes', 'fa-solid fa-t');
     }
 
     public function configureCrud(): Crud
@@ -36,7 +40,6 @@ class DashboardController extends AbstractDashboardController
         return Crud::new()
             ->setPaginatorPageSize(10)
             ->showEntityActionsInlined()
-            ->setDefaultSort(['createdAt' => 'DESC'])
         ;
     }
 }

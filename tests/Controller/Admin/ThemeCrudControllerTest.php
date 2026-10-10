@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Admin;
 
 use App\Entity\Theme;
+use App\Factory\ThemeFactory;
 use App\Tests\Utils\CrudTestCase;
 use App\Repository\ThemeRepository;
 use App\Tests\Story\ThemeTestStory;
@@ -114,22 +115,33 @@ class ThemeCrudControllerTest extends CrudTestCase
 
     public function testEditTheme(): void
     {
-        $user = $this->getUserLogged(['email' => 'admin@example.com']);
-        if (!is_null($user)) {
-            $this->client->loginUser($user);
-        }
-
-        $this->client->request('GET', $this->getAdminLink('edit', 1));
-        $this->client->submitForm('ea[newForm][btn]', [
-            'Theme[name]' => 'Un thème à voir',
+        $theme = ThemeFactory::createOne([
+            'name' => 'theme a édité',
         ]);
 
-        $this->assertResponseRedirects($this->getAdminLink('detail', 1));
+        $themeId = $theme->getId();
+        $this->assertNotNull($themeId);
 
-        /** @var ?Theme */
-        $theme = static::getContainer()->get(ThemeRepository::class)->findOneBy(['name' => 'Un thème à voir']);
+        $user = $this->getUserLogged(['email' => 'admin@example.com']);
+        $this->assertNotNull($user, 'L\'utilisateur n\'a pas pu être récupéré.');
+        $this->client->loginUser($user);
 
-        $this->assertSame('un-theme-a-voir', $theme?->getSlug()?->getValue());
-        $this->assertInstanceOf(Theme::class, $theme);
+        $this->client->request('GET', $this->getAdminLink('edit', $themeId));
+        $this->client->submitForm('ea[newForm][btn]', [
+            'Theme[name]' => 'Un thème édité',
+        ]);
+
+        $this->assertResponseRedirects($this->getAdminLink('detail', $themeId));
+
+        /** @var ?Theme $themeEdit */
+        $themeEdit = static::getContainer()->get(ThemeRepository::class)->findOneBy(['id' => $themeId]);
+        $this->assertNotNull($themeEdit);
+
+        $slug = $themeEdit->getSlug();
+        $this->assertNotNull($slug);
+
+        $this->assertSame('un-theme-edite', $slug->getValue());
+        $this->assertSame('Un thème édité', $themeEdit->getName());
+        $this->assertSame($themeId, $themeEdit->getId());
     }
 }

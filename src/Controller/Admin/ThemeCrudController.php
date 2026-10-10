@@ -13,7 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 /**
@@ -28,11 +30,14 @@ class ThemeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id');
+        yield IdField::new('id')->hideOnForm();
 
         yield TextField::new('name', 'Nom');
 
-        yield SlugField::new('slug', 'Permalien')->setTargetFieldName('name');
+        yield SlugField::new('slug', 'Permalien')
+            ->setTargetFieldName('name')
+            ->hideOnForm()
+        ;
 
         yield DateField::new('createdAt', 'Date de création')
             ->onlyOnIndex()
@@ -61,7 +66,9 @@ class ThemeCrudController extends AbstractCrudController
             ->setSearchFields(['name'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
+            ->setPageTitle('new', 'Ajouter un %entity_label_singular%')
             ->setPageTitle('detail', fn (Theme $theme) => 'Consulter le %entity_label_singular% : <b>'.$theme->getName().'</b>')
+            ->setPageTitle('edit', fn (Theme $theme) => 'Modifier le %entity_label_singular% : <b>'.$theme->getName().'</b>')
         ;
     }
 
@@ -73,6 +80,9 @@ class ThemeCrudController extends AbstractCrudController
                 return $action->setLabel('Ajouter');
             })
             ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE])
+            ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
         ;
     }
 
@@ -82,5 +92,22 @@ class ThemeCrudController extends AbstractCrudController
             ->add('name')
             ->add('createdAt')
         ;
+    }
+
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        $postData = $context->getRequest()->request->all();
+        if (!isset($postData['ea']['newForm']['btn'])) { // @phpstan-ignore-line
+            return parent::getRedirectResponseAfterSave($context, $action);
+        }
+
+        $submitButtonName = $postData['ea']['newForm']['btn'];
+        if ('saveAndReturn' === $submitButtonName) {
+            return $this->redirectToRoute('admin_theme_detail', [
+                'entityId' => $context->getEntity()->getPrimaryKeyValue(),
+            ]);
+        }
+
+        return parent::getRedirectResponseAfterSave($context, $action);
     }
 }

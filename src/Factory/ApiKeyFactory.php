@@ -40,7 +40,6 @@ final class ApiKeyFactory extends PersistentObjectFactory
         return [
             'name' => self::faker()->word(),
             'status' => self::faker()->randomElement(ApiKeyStatus::cases()),
-            'user' => UserFactory::new(),
         ];
     }
 

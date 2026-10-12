@@ -15,6 +15,7 @@
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
+        <env name="DATABASE_URL" value="mysql://app:password@127.0.0.1:3306/app_api_japan?serverVersion=10.11.2-MariaDB&amp;charset=utf8mb4" />
     </php>
 
     <testsuites>

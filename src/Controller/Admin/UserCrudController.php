@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -50,6 +51,11 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new('updatedAt', 'Dernière modification')
             ->onlyOnDetail()
             ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
+
+        yield ArrayField::new('apiKeys')
+            ->onlyOnDetail()
+            ->setTemplatePath('admin/fields/user/api_keys.html.twig')
         ;
     }
 

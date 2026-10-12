@@ -1,0 +1,17 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% if ea().crud.currentAction == 'detail' %}
+    <ul>
+        {% for item in field.value %}
+            {% set api_key_url = ea_url()
+                .setController('App\\Controller\\Admin\\ApiKeyCrudController')
+                .setAction('detail')
+                .setEntityId(item.id)
+            %}
+            <li><a href="{{ api_key_url }}" target="_blank">{{ item.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    {{ field.formattedValue }}
+{% endif %}

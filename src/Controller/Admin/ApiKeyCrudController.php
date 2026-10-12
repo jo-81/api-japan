@@ -13,8 +13,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 /**
@@ -39,15 +41,32 @@ class ApiKeyCrudController extends AbstractCrudController
             ->onlyOnIndex()
         ;
 
+        yield DateTimeField::new('createdAt', 'Date de création')
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
+
         yield DateField::new('lastUsedAt', 'Date de dernière utilisation')
             ->onlyOnIndex()
+        ;
+
+        yield DateTimeField::new('lastUsedAt', 'Date de dernière utilisation')
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
         ;
 
         yield DateField::new('expiredAt', "Date d'expiration")
             ->onlyOnIndex()
         ;
 
-        yield TextField::new('user.email', 'Utilisateur');
+        yield DateTimeField::new('expiredAt', "Date d'expiration")
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
+
+        yield TextField::new('user.email', 'Utilisateur')->onlyOnIndex();
+
+        yield AssociationField::new('user', 'Utilisateur')->onlyOnDetail();
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -61,6 +80,7 @@ class ApiKeyCrudController extends AbstractCrudController
             ->setSearchFields(['user.email', 'name'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
+            ->setPageTitle('detail', fn (ApiKey $apiKey) => 'Consulter la %entity_label_singular% : <b>'.$apiKey->getName().'</b>')
         ;
     }
 
@@ -69,6 +89,7 @@ class ApiKeyCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->disable(Action::NEW, Action::EDIT)
+            ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::INDEX])
         ;
     }
 

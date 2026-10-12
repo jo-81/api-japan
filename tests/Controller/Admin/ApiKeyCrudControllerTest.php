@@ -11,7 +11,7 @@ use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use Zenstruck\Foundry\Attribute\WithStory;
 use App\Controller\Admin\DashboardController;
-use App\Controller\Admin\ThemeCrudController;
+use App\Controller\Admin\ApiKeyCrudController;
 
 #[WithStory(UserLoginStory::class)]
 #[WithStory(ApiKeyStory::class)]
@@ -21,11 +21,11 @@ class ApiKeyCrudControllerTest extends CrudTestCase
     use Factories;
 
     /**
-     * @return class-string<ThemeCrudController> returns the tested Controller Fqcn
+     * @return class-string<ApiKeyCrudController> returns the tested Controller Fqcn
      */
     protected function getControllerFqcn(): string
     {
-        return ThemeCrudController::class;
+        return ApiKeyCrudController::class;
     }
 
     /**
@@ -43,6 +43,7 @@ class ApiKeyCrudControllerTest extends CrudTestCase
     {
         return [
             ['index', 'GET', 200],
+            ['detail', 'GET', 200],
         ];
     }
 }

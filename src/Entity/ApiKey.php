@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Traits\TimestampableTrait;
 use App\Repository\ApiKeyRepository;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ApiKeyRepository::class)]
 class ApiKey
 {

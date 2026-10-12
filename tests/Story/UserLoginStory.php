@@ -6,19 +6,20 @@ namespace App\Tests\Story;
 
 use App\Factory\UserFactory;
 use Zenstruck\Foundry\Story;
+use App\Factory\ApiKeyFactory;
 
 final class UserLoginStory extends Story
 {
     public function build(): void
     {
-        UserFactory::createOne([
+        $admin = UserFactory::createOne([
             'email' => 'admin@example.com',
             'password' => 'X7!kP9@vR2#qL5',
             'roles' => ['ROLE_ADMIN'],
             'emailVerified' => true,
         ]);
 
-        UserFactory::createOne([
+        $user = UserFactory::createOne([
             'email' => 'user@example.com',
             'password' => 'X7!kP9@vR2#qL5',
             'emailVerified' => true,
@@ -29,5 +30,13 @@ final class UserLoginStory extends Story
             'password' => 'X7!kP9@vR2#qL5',
             'emailVerified' => false,
         ]);
+
+        // Création de 3 clés API pour chaque utilisateur
+        foreach ([$admin, $user] as $u) {
+            ApiKeyFactory::createMany(3, [
+                'user' => $u,
+                'status' => \App\Enum\ApiKeyStatus::ACTIVE,
+            ]);
+        }
     }
 }

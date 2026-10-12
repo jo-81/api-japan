@@ -8,14 +8,25 @@ use App\Entity\User;
 use App\Entity\ApiKey;
 use App\Enum\ApiKeyStatus;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class ApiKeyManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        #[Autowire(param: 'api_key.max_active_keys')]
         private readonly int $maxActiveKeys,
+        #[Autowire(param: 'api_key.default_expiration')]
         private readonly string $defaultExpiration,
     ) {
+    }
+
+    /**
+     * Génère un token haché à partir d'un token en clair.
+     */
+    public function hashToken(string $plainToken): string
+    {
+        return hash('sha256', $plainToken);
     }
 
     /**
@@ -44,7 +55,7 @@ class ApiKeyManager
         $apiKey = new ApiKey();
         $apiKey->setUser($user);
         $apiKey->setName($name);
-        $apiKey->setToken(hash('sha256', $plainToken));
+        $apiKey->setToken($this->hashToken($plainToken));
         $apiKey->setStatus(ApiKeyStatus::ACTIVE);
 
         // Expiration basée sur la configuration
@@ -64,7 +75,7 @@ class ApiKeyManager
      */
     public function verify(string $plainToken): ?User
     {
-        $hashedToken = hash('sha256', $plainToken);
+        $hashedToken = $this->hashToken($plainToken);
 
         $apiKey = $this->entityManager->getRepository(ApiKey::class)->findOneBy([
             'token' => $hashedToken,

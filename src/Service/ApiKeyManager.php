@@ -38,7 +38,17 @@ class ApiKeyManager
      */
     public function generate(User $user, string $name): array
     {
-        // 1. Limitation du nombre de clés actives par utilisateur
+        // 1. Vérification de l'unicité du nom pour cet utilisateur
+        $exists = $this->entityManager->getRepository(ApiKey::class)->findOneBy([
+            'user' => $user,
+            'name' => $name,
+        ]);
+
+        if ($exists) {
+            throw new \RuntimeException(sprintf('Vous possédez déjà une clé API nommée "%s".', $name));
+        }
+
+        // 2. Limitation du nombre de clés actives par utilisateur
         $activeKeysCount = $this->entityManager->getRepository(ApiKey::class)->count([
             'user' => $user,
             'status' => ApiKeyStatus::ACTIVE,

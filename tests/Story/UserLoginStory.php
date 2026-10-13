@@ -33,10 +33,13 @@ final class UserLoginStory extends Story
 
         // Création de 3 clés API pour chaque utilisateur
         foreach ([$admin, $user] as $u) {
-            ApiKeyFactory::createMany(3, [
-                'user' => $u,
-                'status' => \App\Enum\ApiKeyStatus::ACTIVE,
-            ]);
+            for ($i = 1; $i <= 3; ++$i) {
+                ApiKeyFactory::createOne([
+                    'user' => $u,
+                    'name' => "Clé API $i",
+                    'status' => \App\Enum\ApiKeyStatus::ACTIVE,
+                ]);
+            }
         }
     }
 }

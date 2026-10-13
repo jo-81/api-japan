@@ -38,7 +38,7 @@ final class ApiKeyFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'name' => self::faker()->word(),
+            'name' => self::faker()->unique()->word(),
             'status' => self::faker()->randomElement(ApiKeyStatus::cases()),
         ];
     }

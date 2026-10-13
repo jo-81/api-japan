@@ -11,6 +11,8 @@ use App\Repository\ApiKeyRepository;
 
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ApiKeyRepository::class)]
+#[ORM\Table(name: 'api_key')]
+#[ORM\UniqueConstraint(name: 'uniq_user_apikey_name', columns: ['user_id', 'name'])]
 class ApiKey
 {
     use TimestampableTrait;

@@ -112,4 +112,17 @@ class ApiKeyManager
 
         return $apiKey->getUser();
     }
+
+    /**
+     * Révoque une clé API.
+     */
+    public function revoke(ApiKey $apiKey): void
+    {
+        if (ApiKeyStatus::ACTIVE !== $apiKey->getStatus()) {
+            return;
+        }
+
+        $apiKey->setStatus(ApiKeyStatus::REVOKED);
+        $this->entityManager->flush();
+    }
 }

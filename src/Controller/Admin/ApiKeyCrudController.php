@@ -6,6 +6,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\ApiKey;
 use App\Enum\ApiKeyStatus;
+use App\Service\ApiKeyManager;
+use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -16,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -86,9 +89,19 @@ class ApiKeyCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $revoked = Action::new('revoked', 'Révoquer', '')
+            ->linkToCrudAction('revoked')
+            ->askConfirmation()
+            ->asWarningAction()
+            ->displayIf(static fn (ApiKey $apikey): bool => ApiKeyStatus::ACTIVE == $apikey->getStatus())
+        ;
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_DETAIL, $revoked)
+
             ->disable(Action::NEW, Action::EDIT)
+
             ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::INDEX])
         ;
     }
@@ -105,5 +118,13 @@ class ApiKeyCrudController extends AbstractCrudController
                 ->canSelectMultiple(false),
             )
         ;
+    }
+
+    #[AdminRoute('/{id}/revoked')]
+    public function revoked(ApiKey $apiKey, ApiKeyManager $apiKeyManager): Response
+    {
+        $apiKeyManager->revoke($apiKey);
+
+        return $this->redirectToRoute('admin_api_key_detail', ['entityId' => $apiKey->getId()]);
     }
 }

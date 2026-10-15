@@ -20,18 +20,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[Vich\Uploadable]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: KanaRepository::class)]
-#[ORM\UniqueConstraint(name: 'uniq_kana_romaji_type', columns: ['romaji', 'type'])]
-#[ORM\UniqueConstraint(name: 'uniq_kana_kunrei_type', columns: ['kunrei', 'type'])]
-#[UniqueEntity(
-    fields: ['romaji', 'type'],
-    message: '{{ value }} existe déjà pour le type de kana sélectionné.',
-    errorPath: 'romaji',
-)]
-#[UniqueEntity(
-    fields: ['kunrei', 'type'],
-    message: '{{ value }} existe déjà pour le type de kana sélectionné.',
-    errorPath: 'kunrei',
-)]
 #[UniqueEntity(
     fields: 'ideogram',
     message: 'L\'idéogramme {{ value }} existe déjà.',

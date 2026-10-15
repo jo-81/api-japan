@@ -62,19 +62,6 @@ class KanaTest extends KernelTestCase
     }
 
     /**
-     * Si romaji est unique par rapport au type : Hiragana / Katakana.
-     */
-    public function testUniqueRomajiType(): void
-    {
-        $kana = $this->getKana();
-        $kana->setRomaji('a');
-
-        $violations = $this->validator->validate($kana);
-
-        $this->assertCount(1, $violations);
-    }
-
-    /**
      * -----------------------------------------
      * Property ideogram
      * -----------------------------------------.
@@ -138,19 +125,6 @@ class KanaTest extends KernelTestCase
             [str_repeat('a', 9).'e', 0],
             [str_repeat('a', 10).'e', 1],
         ];
-    }
-
-    /**
-     * Si kunrei est unique par rapport au type : Hiragana / Katakana.
-     */
-    public function testUniqueKunreiType(): void
-    {
-        $kana = $this->getKana();
-        $kana->setKunrei('a');
-
-        $violations = $this->validator->validate($kana);
-
-        $this->assertCount(1, $violations);
     }
 
     /**

@@ -34,7 +34,8 @@
         "symfony/validator": "8.1.*",
         "symfony/yaml": "8.1.*",
         "symfonycasts/reset-password-bundle": "^1.25",
-        "symfonycasts/verify-email-bundle": "^1.18"
+        "symfonycasts/verify-email-bundle": "^1.18",
+        "vich/uploader-bundle": "^3.0"
     },
     "config": {
         "allow-plugins": {

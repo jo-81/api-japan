@@ -1,0 +1,8 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        kana:
+            uri_prefix: /files/kana
+            upload_destination: '%kernel.project_dir%/public/files/kana'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

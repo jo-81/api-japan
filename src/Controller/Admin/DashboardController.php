@@ -32,6 +32,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(UserCrudController::class, 'Liste des utilisateurs', 'fas fa-users');
         yield MenuItem::linkTo(ApiKeyCrudController::class, 'Liste des clés d\'api', 'fa-solid fa-key');
 
+        yield MenuItem::section('Kana');
+        yield MenuItem::linkTo(KanaCrudController::class, 'Liste des kana', 'fa-solid fa-language');
+
         yield MenuItem::section('Mots de vocabulaire');
         yield MenuItem::linkTo(ThemeCrudController::class, 'Liste des thèmes', 'fa-solid fa-t');
     }

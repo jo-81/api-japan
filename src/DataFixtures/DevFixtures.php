@@ -7,6 +7,7 @@ namespace App\DataFixtures;
 use App\Story\UserStory;
 use App\Story\ThemeStory;
 use App\Story\ApiKeyStory;
+use App\Story\KanaListStory;
 use App\Tests\Story\UserLoginStory;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -21,5 +22,6 @@ class DevFixtures extends Fixture
         UserLoginStory::load();
         ThemeStory::load();
         ApiKeyStory::load();
+        KanaListStory::load();
     }
 }

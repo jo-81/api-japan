@@ -3,6 +3,6 @@ vich_uploader:
 
     mappings:
         kana:
-            uri_prefix: /files/kana
-            upload_destination: '%kernel.project_dir%/public/files/kana'
+            uri_prefix: uploads/kana
+            upload_destination: '%kernel.project_dir%/public/uploads/kana'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

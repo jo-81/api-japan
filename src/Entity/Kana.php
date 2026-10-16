@@ -185,6 +185,10 @@ class Kana
     public function setImageFile(?File $imageFile = null): void
     {
         $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     public function getImageFile(): ?File
@@ -234,5 +238,10 @@ class Kana
         $this->components->removeElement($component);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->ideogram ?? '';
     }
 }

@@ -14,9 +14,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -74,7 +76,9 @@ class VocabularyCrudController extends AbstractCrudController
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
             ->setPageTitle('detail',
                 fn (Vocabulary $vocabulary) => sprintf('Consulter le mot : <b>%s</b>', $vocabulary->getMeaning()),
-            );
+            )
+            ->setPageTitle('new', 'Ajouter un %entity_label_singular%')
+        ;
     }
 
     public function configureActions(Actions $actions): Actions
@@ -85,6 +89,8 @@ class VocabularyCrudController extends AbstractCrudController
                 return $action->setLabel('Ajouter');
             })
             ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE])
+            ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
+            ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
         ;
     }
 
@@ -97,5 +103,16 @@ class VocabularyCrudController extends AbstractCrudController
             ->add(ChoiceFilter::new('jlpt')->setTranslatableChoices(JlptLevel::cases()))
             ->add('theme')
         ;
+    }
+
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        if (Action::NEW == $action) {
+            return $this->redirectToRoute('admin_vocabulary_detail', [
+                'entityId' => $context->getEntity()->getPrimaryKeyValue(),
+            ]);
+        }
+
+        return parent::getRedirectResponseAfterSave($context, $action);
     }
 }

@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -52,6 +53,11 @@ class ThemeCrudController extends AbstractCrudController
         yield DateTimeField::new('updatedAt', 'Dernière modification')
             ->onlyOnDetail()
             ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
+
+        yield ArrayField::new('vocabularies', 'Mot de vocabulaires')
+        ->setTemplatePath('admin/fields/theme/vocabularies.html.twig')
+            ->onlyOnDetail()
         ;
     }
 

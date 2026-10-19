@@ -169,4 +169,9 @@ class Vocabulary implements SluggableInterface
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->meaning ?? '';
+    }
 }

@@ -36,6 +36,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(KanaCrudController::class, 'Liste des kana', 'fa-solid fa-language');
 
         yield MenuItem::section('Mots de vocabulaire');
+        yield MenuItem::linkTo(VocabularyCrudController::class, 'Mots de vocabulaires', 'fa-solid fa-v');
         yield MenuItem::linkTo(ThemeCrudController::class, 'Liste des thèmes', 'fa-solid fa-t');
     }
 

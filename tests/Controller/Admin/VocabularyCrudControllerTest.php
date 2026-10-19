@@ -45,6 +45,7 @@ class VocabularyCrudControllerTest extends CrudTestCase
             ['index', 'GET', 200],
             ['detail', 'GET', 200],
             ['new', 'GET', 200],
+            ['edit', 'GET', 200],
         ];
     }
 }

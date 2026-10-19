@@ -78,6 +78,9 @@ class VocabularyCrudController extends AbstractCrudController
                 fn (Vocabulary $vocabulary) => sprintf('Consulter le mot : <b>%s</b>', $vocabulary->getMeaning()),
             )
             ->setPageTitle('new', 'Ajouter un %entity_label_singular%')
+            ->setPageTitle('edit',
+                fn (Vocabulary $vocabulary) => sprintf('Modifier le mot : <b>%s</b>', $vocabulary->getMeaning()),
+            )
         ;
     }
 
@@ -91,6 +94,7 @@ class VocabularyCrudController extends AbstractCrudController
             ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE])
             ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
         ;
     }
 
@@ -107,7 +111,7 @@ class VocabularyCrudController extends AbstractCrudController
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
-        if (Action::NEW == $action) {
+        if (Action::NEW == $action || Action::EDIT == $action) {
             return $this->redirectToRoute('admin_vocabulary_detail', [
                 'entityId' => $context->getEntity()->getPrimaryKeyValue(),
             ]);

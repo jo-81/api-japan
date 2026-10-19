@@ -7,12 +7,14 @@ namespace App\Tests\Controller\Admin;
 use App\Tests\Utils\CrudTestCase;
 use App\Tests\Story\UserLoginStory;
 use Zenstruck\Foundry\Test\Factories;
+use App\Tests\Story\VocabularyTestStory;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use Zenstruck\Foundry\Attribute\WithStory;
 use App\Controller\Admin\DashboardController;
 use App\Controller\Admin\VocabularyCrudController;
 
 #[WithStory(UserLoginStory::class)]
+#[WithStory(VocabularyTestStory::class)]
 class VocabularyCrudControllerTest extends CrudTestCase
 {
     use ResetDatabase;
@@ -41,6 +43,7 @@ class VocabularyCrudControllerTest extends CrudTestCase
     {
         return [
             ['index', 'GET', 200],
+            ['detail', 'GET', 200],
         ];
     }
 }

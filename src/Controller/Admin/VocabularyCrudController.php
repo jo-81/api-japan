@@ -8,11 +8,14 @@ use App\Enum\JlptLevel;
 use App\Entity\Vocabulary;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -29,7 +32,11 @@ class VocabularyCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        yield IdField::new('id')->onlyOnDetail();
+
         yield TextField::new('meaning', 'Signification');
+
+        yield SlugField::new('slug', 'Permalien')->setTargetFieldName('romaji')->onlyOnDetail();
 
         yield TextField::new('kana');
 
@@ -42,6 +49,16 @@ class VocabularyCrudController extends AbstractCrudController
         yield ChoiceField::new('jlpt', 'Niveau JLPT');
 
         yield AssociationField::new('theme', 'Thème associé');
+
+        yield DateTimeField::new('createdAt', 'Date de création')
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
+
+        yield DateTimeField::new('updatedAt', 'Dernière modification')
+            ->onlyOnDetail()
+            ->setFormat(DateTimeField::FORMAT_FULL, DateTimeField::FORMAT_SHORT)
+        ;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -55,7 +72,9 @@ class VocabularyCrudController extends AbstractCrudController
             ->setSearchFields(['romaji', 'kunrei', 'meaning', 'kana'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
-        ;
+            ->setPageTitle('detail',
+                fn (Vocabulary $vocabulary) => sprintf('Consulter le mot : <b>%s</b>', $vocabulary->getMeaning()),
+            );
     }
 
     public function configureActions(Actions $actions): Actions

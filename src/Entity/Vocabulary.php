@@ -11,6 +11,8 @@ use App\Model\SluggableInterface;
 use App\Traits\TimestampableTrait;
 use App\Repository\VocabularyRepository;
 use App\Validator\Constraints as AppAssert;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -58,6 +60,17 @@ class Vocabulary implements SluggableInterface
 
     #[ORM\Column(nullable: true, enumType: JlptLevel::class)]
     private ?JlptLevel $jlpt = null;
+
+    /**
+     * @var Collection<int, Kanji>
+     */
+    #[ORM\ManyToMany(targetEntity: Kanji::class, mappedBy: 'words')]
+    private Collection $kanjis;
+
+    public function __construct()
+    {
+        $this->kanjis = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -173,5 +186,32 @@ class Vocabulary implements SluggableInterface
     public function __toString(): string
     {
         return $this->meaning ?? '';
+    }
+
+    /**
+     * @return Collection<int, Kanji>
+     */
+    public function getKanjis(): Collection
+    {
+        return $this->kanjis;
+    }
+
+    public function addKanji(Kanji $kanji): static
+    {
+        if (!$this->kanjis->contains($kanji)) {
+            $this->kanjis->add($kanji);
+            $kanji->addWord($this);
+        }
+
+        return $this;
+    }
+
+    public function removeKanji(Kanji $kanji): static
+    {
+        if ($this->kanjis->removeElement($kanji)) {
+            $kanji->removeWord($this);
+        }
+
+        return $this;
     }
 }

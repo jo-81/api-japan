@@ -47,31 +47,6 @@ class Kanji
     #[ORM\Column(nullable: true, enumType: JlptLevel::class)]
     private ?JlptLevel $jlpt = null;
 
-    /** @var string[] $meanings */
-    #[Assert\All([
-        new Assert\NotBlank(),
-        new AppAssert\OnlyString(),
-        new Assert\NoSuspiciousCharacters(),
-    ])]
-    #[ORM\Column]
-    private array $meanings = [];
-
-    /** @var string[] $kunyomi */
-    #[Assert\All([
-        new AppAssert\OnlyString(),
-        new Assert\NoSuspiciousCharacters(),
-    ])]
-    #[ORM\Column(nullable: true)]
-    private ?array $kunyomi = null;
-
-    /** @var string[] $onyomi */
-    #[Assert\All([
-        new AppAssert\OnlyString(),
-        new Assert\NoSuspiciousCharacters(),
-    ])]
-    #[ORM\Column(nullable: true)]
-    private ?array $onyomi = null;
-
     /**
      * @var Collection<int, self>
      */
@@ -84,10 +59,19 @@ class Kanji
     #[ORM\ManyToMany(targetEntity: Vocabulary::class, inversedBy: 'kanjis')]
     private Collection $words;
 
+    /**
+     * @var Collection<int, Signification>
+     */
+    #[Assert\Count(min: 1)]
+    #[Assert\Valid()]
+    #[ORM\OneToMany(targetEntity: Signification::class, mappedBy: 'kanji', orphanRemoval: true, cascade: ['persist'])]
+    private Collection $significations;
+
     public function __construct()
     {
         $this->similars = new ArrayCollection();
         $this->words = new ArrayCollection();
+        $this->significations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -156,60 +140,6 @@ class Kanji
     }
 
     /**
-     * @return string[]
-     */
-    public function getMeanings(): array
-    {
-        return $this->meanings;
-    }
-
-    /**
-     * @param string[] $meanings
-     */
-    public function setMeanings(array $meanings): static
-    {
-        $this->meanings = $meanings;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]|null
-     */
-    public function getKunyomi(): ?array
-    {
-        return $this->kunyomi;
-    }
-
-    /**
-     * @param string[]|null $kunyomi
-     */
-    public function setKunyomi(?array $kunyomi): static
-    {
-        $this->kunyomi = $kunyomi;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]|null
-     */
-    public function getOnyomi(): ?array
-    {
-        return $this->onyomi;
-    }
-
-    /**
-     * @param string[]|null $onyomi
-     */
-    public function setOnyomi(?array $onyomi): static
-    {
-        $this->onyomi = $onyomi;
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, self>
      */
     public function getSimilars(): Collection
@@ -255,5 +185,40 @@ class Kanji
         $this->words->removeElement($word);
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Signification>
+     */
+    public function getSignifications(): Collection
+    {
+        return $this->significations;
+    }
+
+    public function addSignification(Signification $signification): static
+    {
+        if (!$this->significations->contains($signification)) {
+            $this->significations->add($signification);
+            $signification->setKanji($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignification(Signification $signification): static
+    {
+        if ($this->significations->removeElement($signification)) {
+            // set the owning side to null (unless already changed)
+            if ($signification->getKanji() === $this) {
+                $signification->setKanji(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->ideogram ?? '';
     }
 }

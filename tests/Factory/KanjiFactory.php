@@ -36,9 +36,8 @@ final class KanjiFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'meanings' => [],
+            'ideogram' => self::faker()->text(10),
             'numberStroke' => self::faker()->randomNumber(),
-            'position' => self::faker()->randomNumber(),
             'published' => self::faker()->boolean(),
         ];
     }

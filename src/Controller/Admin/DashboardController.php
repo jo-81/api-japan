@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Signification;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;

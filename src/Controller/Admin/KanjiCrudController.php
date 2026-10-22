@@ -4,22 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\SignificationCrudController;
 use App\Entity\Kanji;
 use App\Entity\Signification;
+use Doctrine\Common\Collections\Collection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Kanji>
+ */
 class KanjiCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -47,9 +52,9 @@ class KanjiCrudController extends AbstractCrudController
         ;
 
         yield ArrayField::new('significations', 'Sens')
-            ->formatValue(fn ($value) => implode(' / ', array_map(
-                fn (Signification $s) => $s->getMeaning(),
-                $value->toArray()
+            ->formatValue(fn (Collection $value) => implode(' / ', array_map(
+                fn (Signification $s) => $s->getMeaning(), // @phpstan-ignore-line
+                $value->toArray(),
             )))
             ->hideOnForm()
         ;
@@ -86,5 +91,16 @@ class KanjiCrudController extends AbstractCrudController
                 return $action->setLabel('Ajouter');
             })
         ;
+    }
+
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        if (Action::NEW == $action || Action::EDIT == $action) {
+            return $this->redirectToRoute('admin_kanji_detail', [
+                'entityId' => $context->getEntity()->getPrimaryKeyValue(),
+            ]);
+        }
+
+        return parent::getRedirectResponseAfterSave($context, $action);
     }
 }

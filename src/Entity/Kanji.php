@@ -62,6 +62,7 @@ class Kanji
     /**
      * @var Collection<int, Signification>
      */
+    #[Assert\Count(min: 1)]
     #[Assert\Valid()]
     #[ORM\OneToMany(targetEntity: Signification::class, mappedBy: 'kanji', orphanRemoval: true, cascade: ['persist'])]
     private Collection $significations;

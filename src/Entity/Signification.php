@@ -5,22 +5,34 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Traits\TimestampableTrait;
 use App\Repository\SignificationRepository;
+use App\Validator\Constraints as AppAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: SignificationRepository::class)]
 class Signification
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 1, max: 255)]
+    #[AppAssert\OnlyString()]
+    #[ORM\Column(length: 255, index: true)]
     private ?string $meaning = null;
 
+    #[Assert\Length(min: 1, max: 255)]
+    #[AppAssert\OnlyString()]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $onyomi = null;
 
+    #[Assert\Length(min: 1, max: 255)]
+    #[AppAssert\OnlyString()]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $kunyomi = null;
 
@@ -52,7 +64,7 @@ class Signification
 
     public function setOnyomi(?string $onyomi): static
     {
-        $this->onyomi = strtoupper($onyomi);
+        $this->onyomi = null === $onyomi ? $onyomi : strtoupper($onyomi);
 
         return $this;
     }

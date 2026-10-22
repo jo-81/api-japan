@@ -56,7 +56,7 @@ class ThemeCrudController extends AbstractCrudController
         ;
 
         yield ArrayField::new('vocabularies', 'Mot de vocabulaires')
-        ->setTemplatePath('admin/fields/theme/vocabularies.html.twig')
+            ->setTemplatePath('admin/fields/theme/vocabularies.html.twig')
             ->onlyOnDetail()
         ;
     }

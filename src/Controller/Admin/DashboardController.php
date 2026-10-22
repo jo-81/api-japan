@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Signification;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -31,6 +32,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Utilisateurs');
         yield MenuItem::linkTo(UserCrudController::class, 'Liste des utilisateurs', 'fas fa-users');
         yield MenuItem::linkTo(ApiKeyCrudController::class, 'Liste des clés d\'api', 'fa-solid fa-key');
+
+        yield MenuItem::section('Kanji');
+        yield MenuItem::linkTo(KanjiCrudController::class, 'Liste des kanji', 'fa-solid fa-k');
+        yield MenuItem::linkTo(SignificationCrudController::class, 'Significations', 'fa-solid fa-s');
 
         yield MenuItem::section('Kana');
         yield MenuItem::linkTo(KanaCrudController::class, 'Liste des kana', 'fa-solid fa-language');

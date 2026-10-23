@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Kanji;
 use App\Entity\Signification;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Collections\Collection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -62,7 +63,18 @@ class KanjiCrudController extends AbstractCrudController
         yield FormField::addColumn(12);
         yield FormField::addColumn(6);
         yield AssociationField::new('similars', 'Kanji similaire')
-            ->hideOnIndex()
+            ->onlyWhenCreating()
+        ;
+        yield AssociationField::new('similars', 'Kanji similaire')
+            ->onlyWhenUpdating()
+            ->setQueryBuilder(function (QueryBuilder $qb) {
+                $kana = $this->getCurrentInstance();
+
+                return $qb
+                    ->andWhere('entity.id <> :id')
+                    ->setParameter('id', $kana?->getId())
+                ;
+            })
         ;
         yield FormField::addColumn(6);
         yield AssociationField::new('words', 'Exemple de mots')
@@ -80,6 +92,7 @@ class KanjiCrudController extends AbstractCrudController
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
             ->setPageTitle('new', 'Ajouter un %entity_label_singular%')
+            ->setPageTitle('edit', 'Modifier le %entity_label_singular%')
         ;
     }
 
@@ -102,5 +115,10 @@ class KanjiCrudController extends AbstractCrudController
         }
 
         return parent::getRedirectResponseAfterSave($context, $action);
+    }
+
+    public function getCurrentInstance(): ?Kanji
+    {
+        return $this->getContext()?->getEntity()?->getInstance();
     }
 }

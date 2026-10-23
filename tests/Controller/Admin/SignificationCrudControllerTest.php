@@ -45,6 +45,8 @@ class SignificationCrudControllerTest extends CrudTestCase
             ['index', 'GET', 200],
             ['new', 'GET', 403],
             ['detail', 'GET', 200],
+            ['edit', 'GET', 200],
+            ['edit', 'POST', 200],
         ];
     }
 }

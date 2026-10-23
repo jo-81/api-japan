@@ -65,7 +65,7 @@ class SignificationCrudController extends AbstractCrudController
 
             ->setDefaultSort(['id' => 'DESC'])
 
-            ->setSearchFields(['meaning', 'onyomi', 'kunyomi'])
+            ->setSearchFields(['meaning', 'onyomi', 'kunyomi', 'kanji.ideogram'])
 
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
             ->setPageTitle('new', 'Ajouter une %entity_label_singular%')
@@ -88,7 +88,6 @@ class SignificationCrudController extends AbstractCrudController
             ->add('meaning')
             ->add('onyomi')
             ->add('kunyomi')
-            ->add('kanji')
         ;
     }
 }

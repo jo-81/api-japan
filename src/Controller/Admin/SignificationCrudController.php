@@ -70,7 +70,7 @@ class SignificationCrudController extends AbstractCrudController
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
             ->setPageTitle('new', 'Ajouter une %entity_label_singular%')
             ->setPageTitle('edit', 'Modifier la %entity_label_singular%')
-            ->setPageTitle('detail', 'consulter la %entity_label_singular%')
+            ->setPageTitle('detail', 'Consulter la %entity_label_singular%')
         ;
     }
 
@@ -79,6 +79,8 @@ class SignificationCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->disable(Action::NEW)
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE])
+            ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
         ;
     }
 

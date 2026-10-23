@@ -45,8 +45,16 @@ class SignificationCrudController extends AbstractCrudController
         ;
 
         yield AssociationField::new('kanji', 'Associé au kanji')
+            ->setColumns(12)
             ->hideOnForm()
         ;
+
+        if (SignificationCrudController::class == $this->getContext()?->getCrud()?->getControllerFqcn()) {
+            yield AssociationField::new('kanji', 'Associé au kanji')
+                ->setColumns(12)
+                ->onlyWhenUpdating()
+            ;
+        }
     }
 
     public function configureCrud(Crud $crud): Crud

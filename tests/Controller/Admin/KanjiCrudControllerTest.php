@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Admin;
 
 use App\Tests\Utils\CrudTestCase;
+use App\Tests\Story\KanjiTestStory;
 use App\Tests\Story\UserLoginStory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -13,6 +14,7 @@ use App\Controller\Admin\DashboardController;
 use App\Controller\Admin\KanjiCrudController;
 
 #[WithStory(UserLoginStory::class)]
+#[WithStory(KanjiTestStory::class)]
 class KanjiCrudControllerTest extends CrudTestCase
 {
     use ResetDatabase;
@@ -43,6 +45,8 @@ class KanjiCrudControllerTest extends CrudTestCase
             ['index', 'GET', 200],
             ['new', 'GET', 200],
             ['new', 'POST', 200],
+            ['edit', 'GET', 200],
+            ['edit', 'POST', 200],
         ];
     }
 }

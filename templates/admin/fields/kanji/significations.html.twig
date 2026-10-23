@@ -1,0 +1,19 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+
+{% if ea().crud.currentAction == 'detail' %}
+    <ul>
+        {% for item in field.value %}
+            {% set signification = ea_url()
+                .setController('App\\Controller\\Admin\\SignificationCrudController')
+                .setAction('detail')
+                .setEntityId(item.id)
+            %}
+
+            <li><a href="{{ signification }}" target="_blank">{{ item.meaning }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    {{ field.formattedValue }}
+{% endif %}

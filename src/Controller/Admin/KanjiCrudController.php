@@ -11,6 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Collections\Collection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
@@ -39,6 +40,7 @@ class KanjiCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addColumn(6);
+        yield IdField::new('id')->onlyOnDetail();
         yield TextField::new('ideogram', 'Idéogramme');
         yield IntegerField::new('position', 'Classement');
         yield IntegerField::new('numberStroke', 'Traits');
@@ -60,11 +62,20 @@ class KanjiCrudController extends AbstractCrudController
                 fn (Signification $s) => $s->getMeaning(), // @phpstan-ignore-line
                 $value->toArray(),
             )))
-            ->hideOnForm()
+            ->onlyOnIndex()
+        ;
+
+        yield CollectionField::new('significations')
+            ->onlyOnDetail()
+            ->setTemplatePath('/admin/fields/kanji/significations.html.twig')
         ;
 
         yield FormField::addColumn(12);
         yield FormField::addColumn(6);
+        yield ArrayField::new('similars', 'Kanji similaire')
+            ->onlyOnDetail()
+            ->setTemplatePath('/admin/fields/kanji/list.html.twig')
+        ;
         yield AssociationField::new('similars', 'Kanji similaire')
             ->onlyWhenCreating()
         ;
@@ -81,7 +92,11 @@ class KanjiCrudController extends AbstractCrudController
         ;
         yield FormField::addColumn(6);
         yield AssociationField::new('words', 'Exemple de mots')
-            ->hideOnIndex()
+            ->onlyOnForms()
+        ;
+        yield ArrayField::new('words', 'Exemple de mots')
+            ->onlyOnDetail()
+            ->setTemplatePath('/admin/fields/kanji/vocabularies.html.twig')
         ;
     }
 
@@ -98,6 +113,7 @@ class KanjiCrudController extends AbstractCrudController
             ->setPageTitle('index', 'Liste des %entity_label_plural%')
             ->setPageTitle('new', 'Ajouter un %entity_label_singular%')
             ->setPageTitle('edit', 'Modifier le %entity_label_singular%')
+            ->setPageTitle('detail', 'Consulter le %entity_label_singular%')
         ;
     }
 
@@ -108,6 +124,8 @@ class KanjiCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action->setLabel('Ajouter');
             })
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE])
+            ->reorder(Crud::PAGE_DETAIL, [Action::DELETE, Action::EDIT, Action::INDEX])
         ;
     }
 
